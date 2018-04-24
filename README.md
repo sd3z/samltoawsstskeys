@@ -27,10 +27,12 @@ The Security Token Service (STS) from AWS provides an API action assumeRoleWithS
 ## Create a link to your .aws/credentials directory
 ### <a name="winlink"></a>Windows
 del %UserProfile%\.aws\credentials
+
 mklink %UserProfile%\.aws\credentials %UserProfile%\Downloads\credentials
 
 ### <a name="maclink"></a>Mac OSX
 rm ~/.aws/credentials
+
 ln -s ~/Downloads/credentials ~/.aws/credentials
 
 ## <a name="faq"></a>FAQ: Frequently Asked Question
