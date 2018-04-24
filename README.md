@@ -26,17 +26,17 @@ The Security Token Service (STS) from AWS provides an API action assumeRoleWithS
 
 ## Create a link to your .aws/credentials directory
 ### <a name="winlink"></a>Windows
+```
 del %UserProfile%\.aws\credentials
-
 mklink %UserProfile%\.aws\credentials %UserProfile%\Downloads\credentials
-
+```
 ### <a name="maclink"></a>Mac OSX
+```
 rm ~/.aws/credentials
-
 ln -s ~/Downloads/credentials ~/.aws/credentials
-
+```
 ## <a name="faq"></a>FAQ: Frequently Asked Question
 1. Why can I not save file somewhere else?
-TA quicker way to get the full latest list is to open Chrome > Console and hit document.extraRoles.   Their full list can be easily downloaded for you to use within your own STS plugin. ODO
+> A quicker way to get the full latest list is to open Chrome > Console and hit document.extraRoles.   Their full list can be easily downloaded for you to use within your own STS plugin. 
 1. How long are the credentials valid?
-AWS only allow the STS temporary credentials for up to 2 hours.  
+> AWS only allow the STS temporary credentials for up to 2 hours.  
