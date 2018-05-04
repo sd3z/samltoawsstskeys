@@ -1,5 +1,10 @@
 # Changelog
 
+## 2018-05-04
+* Override the recently used list of roles
+* Random color choosen based on hash of account id
+* Updated readme with better instructions
+
 ## 2017-nov-01 (v2.1)
 * Bug fix: Chrome 62 broke the extension. Special thanks for [Brice](https://github.com/bdruth) for contributing. Thanks to [Gijs](https://gitlab.com/gbvanrenswoude) for helping out with testing.
 
