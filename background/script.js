@@ -2,9 +2,8 @@
 var FileName = 'credentials';
 var RoleArns = {};
 const AlarmName = "samlAssumeRoleAlarm";
-const repeatAlarm = 50 //  minutes
-var samlDetails; 
-
+const refreshCreds = 55 //  How often the additional roles need to be refreshed in minutes
+var SamlCreds;
 
 // When this background process starts, load variables from chrome storage 
 // from saved Extension Options
@@ -58,7 +57,6 @@ function removeOnBeforeRequestEventListener() {
 // This function runs on each request to https://signin.aws.amazon.com/saml
 function onBeforeRequestEvent(details) {
   // Decode base64 SAML assertion in the request
-  samlDetails = details;
   var samlXmlDoc = "";
   var formDataPayload = undefined;
   if (details.requestBody.formData) {
@@ -129,12 +127,11 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
   // Extraxt both regex patterns from SAMLAssertion attribute
   RoleArn = samlattribute.match(reRole)[0];
   PrincipalArn = samlattribute.match(rePrincipal)[0];
-
-  // Set parameters needed for assumeRoleWithSAML method
   var params = {
     PrincipalArn: PrincipalArn,
     RoleArn: RoleArn,
-    SAMLAssertion: SAMLAssertion
+    SAMLAssertion: SAMLAssertion,
+    DurationSeconds: (Duration * 60)
   };
   // Call STS API from AWS
   var sts = new AWS.STS();
@@ -146,6 +143,10 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
         "aws_access_key_id = " + data.Credentials.AccessKeyId + " \n" +
         "aws_secret_access_key = " + data.Credentials.SecretAccessKey + " \n" +
         "aws_session_token = " + data.Credentials.SessionToken;
+
+      // Saving Creds for use when triggered.
+      SamlCreds = data.Credentials;
+      console.log("Creds expiring in ", data.Credentials.Expiration);
       // If there are no Role ARNs configured in the options panel, continue to create credentials file
       // Otherwise, extend docContent with a profile for each specified ARN in the options panel
       if (Object.keys(RoleArns).length == 0) {
@@ -154,16 +155,18 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
       } else {
         var profileList = Object.keys(RoleArns);
         console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[0]]);
+
         assumeAdditionalRole(profileList, 0, data.Credentials.AccessKeyId, data.Credentials.SecretAccessKey, data.Credentials.SessionToken, docContent);
       }
     }
   });
+
 }
 
 
 // Will fetch additional STS keys for 1 role from the RoleArns dict
 // The assume-role API is called using the credentials (STS keys) fetched using the SAML claim. Basically the default profile.
-function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, SessionToken,  docContent) {
+function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, SessionToken, docContent) {
   // Set the fetched STS keys from the SAML reponse as credentials for doing the API call
   var options = {
     'accessKeyId': AccessKeyId,
@@ -190,7 +193,7 @@ function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, 
     // Otherwise, this is the last profile/role in the RoleArns dict. Proceed to creating the credentials file
     if (index < profileList.length - 1) {
       console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[index + 1]]);
-      assumeAdditionalRole(profileList, index + 1, AccessKeyId, SecretAccessKey, SessionToken,  docContent);
+      assumeAdditionalRole(profileList, index + 1, AccessKeyId, SecretAccessKey, SessionToken, docContent);
     } else {
       outputDocAsDownload(docContent);
     }
@@ -248,22 +251,35 @@ chrome.runtime.onMessage.addListener(
 function alarmListener(alarm) {
   if (alarm.name === AlarmName) {
     console.log('alarm trigger, refreshing additional roles.', Date.now());
-    onBeforeRequestEvent(samlDetails);
+
+    //https://developer.chrome.com/extensions/alarms#type-Alarm
+    chrome.alarms.create(AlarmName, {
+      //  delayInMinutes: 0.1,
+      periodInMinutes: refreshCreds
+    });
+
+    // Refreshing the creds
+    var docContent = "[default] \n" +
+      "aws_access_key_id = " + SamlCreds.AccessKeyId + " \n" +
+      "aws_secret_access_key = " + SamlCreds.SecretAccessKey + " \n" +
+      "aws_session_token = " + SamlCreds.SessionToken;
+
+
+    var profileList = Object.keys(RoleArns);
+    console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[0]]);
+    assumeAdditionalRole(profileList, 0, SamlCreds.AccessKeyId, SamlCreds.SecretAccessKey, SamlCreds.SessionToken, docContent);
   }
 }
-//https://developer.chrome.com/extensions/alarms#type-Alarm
-chrome.alarms.create(AlarmName, {
-  //when: dateAlarm,
-  periodInMinutes: parseInt(repeatAlarm)
-});
 chrome.alarms.onAlarm.addListener(alarmListener);
 
 function loadItemsFromStorage() {
   chrome.storage.sync.get({
     FileName: 'credentials',
-    RoleArns: {}
+    RoleArns: {},
+    Duration: 60
   }, function (items) {
     FileName = items.FileName;
     RoleArns = items.RoleArns;
+    Duration = items.Duration;
   });
 }

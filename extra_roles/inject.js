@@ -29,6 +29,7 @@ function loadItemsFromStorage() {
 	RoleArns: {}
   }, function(items) {
     FileName = items.FileName;
+    Duration = items.Duration;
     RoleArns = items.RoleArns;
     var s = document.createElement('script');
     s.text = "document.extraRoles = " + JSON.stringify(RoleArns);

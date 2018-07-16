@@ -24,6 +24,12 @@
 			<input type="text" name="FileName" id="FileName" size="40">
 		</div>
 		
+		<div id="divDuration" class="setting-part">
+				<label>Duration of your CLI/SDK credentials expiry.  This must be less than or equal to the Maximum Session time for CLI/SDK</label>
+				<br />
+				<input type="text" name="Duration" id="Duration" size="40">
+			</div>
+		
 		<div id="divRoles" class="setting-part">
 			<label>[OPTIONAL]</label><br>
 			<label>Specify a list of Role ARN's. For each role the plugin will call the assume-role API. The fetched AWS STS keys will be added to the output file as separate profiles.</label>
