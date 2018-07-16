@@ -2,8 +2,8 @@
 var FileName = 'credentials';
 var RoleArns = {};
 const AlarmName = "samlAssumeRoleAlarm";
-const repeatAlarm = 59 // 15 minutes
-var samlDetails;
+const repeatAlarm = 50 //  minutes
+var samlDetails; 
 
 
 // When this background process starts, load variables from chrome storage 
@@ -134,8 +134,7 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
   var params = {
     PrincipalArn: PrincipalArn,
     RoleArn: RoleArn,
-    SAMLAssertion: SAMLAssertion,
-    DurationSeconds: 3600
+    SAMLAssertion: SAMLAssertion
   };
   // Call STS API from AWS
   var sts = new AWS.STS();
@@ -149,14 +148,13 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
         "aws_session_token = " + data.Credentials.SessionToken;
       // If there are no Role ARNs configured in the options panel, continue to create credentials file
       // Otherwise, extend docContent with a profile for each specified ARN in the options panel
-      var DurationSeconds = Math.round((data.Credentials.Expiration - (new Date())) / 1000)
       if (Object.keys(RoleArns).length == 0) {
         console.log('Output maken');
         outputDocAsDownload(docContent);
       } else {
         var profileList = Object.keys(RoleArns);
         console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[0]]);
-        assumeAdditionalRole(profileList, 0, data.Credentials.AccessKeyId, data.Credentials.SecretAccessKey, data.Credentials.SessionToken, DurationSeconds, docContent);
+        assumeAdditionalRole(profileList, 0, data.Credentials.AccessKeyId, data.Credentials.SecretAccessKey, data.Credentials.SessionToken, docContent);
       }
     }
   });
@@ -165,7 +163,7 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
 
 // Will fetch additional STS keys for 1 role from the RoleArns dict
 // The assume-role API is called using the credentials (STS keys) fetched using the SAML claim. Basically the default profile.
-function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, SessionToken, DurationSeconds, docContent) {
+function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, SessionToken,  docContent) {
   // Set the fetched STS keys from the SAML reponse as credentials for doing the API call
   var options = {
     'accessKeyId': AccessKeyId,
@@ -176,8 +174,7 @@ function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, 
   // Set the parameters for the AssumeRole API call. Meaning: What role to assume
   var params = {
     RoleArn: RoleArns[profileList[index]],
-    RoleSessionName: profileList[index],
-    DurationSeconds: DurationSeconds
+    RoleSessionName: profileList[index]
   };
   // Call the API
   sts.assumeRole(params, function (err, data) {
@@ -193,7 +190,7 @@ function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, 
     // Otherwise, this is the last profile/role in the RoleArns dict. Proceed to creating the credentials file
     if (index < profileList.length - 1) {
       console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[index + 1]]);
-      assumeAdditionalRole(profileList, index + 1, AccessKeyId, SecretAccessKey, SessionToken, DurationSeconds, docContent);
+      assumeAdditionalRole(profileList, index + 1, AccessKeyId, SecretAccessKey, SessionToken,  docContent);
     } else {
       outputDocAsDownload(docContent);
     }
