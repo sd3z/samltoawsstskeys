@@ -1,5 +1,9 @@
 # Changelog
 
+## 2018-07-16
+* Set the duration based on the AWS CLI duration
+* Updated colors to be of an acceptable lumens for use with black text 
+
 ## 2018-05-04
 * Override the recently used list of roles
 * Random color choosen based on hash of account id
