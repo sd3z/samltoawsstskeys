@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "author": "Sean Fernandez sean@rollerdigital.com",
+  "author": "Sean Fernandez sean@fernand3z.com",
   "homepage_url": "https://github.com/sd3z/samltoawsstskeys",
-  "name": "ROLLER SAML to AWS STS Keys",
+  "name": "SAML to AWS STS Keys 2.5",
   "description": "Generates file with AWS STS Keys after logging in to AWS webconsole using SSO (SAML 2.0). It leverages 'assumeRoleWithSAML' API.",
   "version": "2.5",
   "icons": {  "16": "icons/icon_16.png",
