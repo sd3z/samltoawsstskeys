@@ -133,6 +133,11 @@ function extractPrincipalPlusRoleAndAssumeRole(samlattribute, SAMLAssertion) {
     SAMLAssertion: SAMLAssertion,
     DurationSeconds: (Duration * 60)
   };
+  //https://developer.chrome.com/extensions/alarms#type-Alarm
+  chrome.alarms.create(AlarmName, {
+    //  delayInMinutes: 0.1,
+    periodInMinutes: refreshCreds
+  });
   // Call STS API from AWS
   var sts = new AWS.STS();
   sts.assumeRoleWithSAML(params, function (err, data) {
