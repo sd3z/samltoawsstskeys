@@ -101,25 +101,9 @@
         var c = (i & 0x00FFFFFF)
         .toString(16)
         .toUpperCase();
-        while(luminance_get(("00000".substring(0, 6 - c.length) + c)) < 150) {     
-            i=i+1;           
-            c = (i & 0x00FFFFFF)
-            .toString(16)
-            .toUpperCase();
-        }
-        
         return "00000".substring(0, 6 - c.length) + c
     }
-    // Needed to figure out if the text should be white or black.
-   function luminance_get(color) {
-        var rgb = getRGB(color);
-        if (!rgb) return null;
-            return 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-    }
-    function getRGB(a){
-         return[parseInt(a[1]+a[1],16),parseInt(a[2]+a[2],16),parseInt(a[3]+a[3],16)];
-    };
-    
+
     function p(A) {
         if (A) {
             A = A.slice(0, 5);
@@ -277,3 +261,7 @@ AWSC.jQuery("#nav-usernameMenu").on("click", function(event) {
         }
     // },250)
 });
+
+
+AWSC.jQuery("#awsgnav .nav-menu .awsc-switched-role-username-wrapper .nav-elt-label")[0].style.color = "#fff";
+AWSC.jQuery("#awsgnav .nav-menu .awsc-switched-role-username-wrapper .nav-elt-label")[0].style.textShadow = '#232f3e 0 0 2px';
