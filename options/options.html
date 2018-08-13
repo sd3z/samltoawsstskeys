@@ -1,32 +1,42 @@
 <!doctype html>
 <html>
-  <head>
+
+<head>
 	<script src="../lib/jquery-3.1.1.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="options.css">
-    <title>Options page for 'SAML to AWS STS Keys Converter'</title>
-  </head>
-  <body>
+	<title>Options page for 'SAML to AWS STS Keys Converter'</title>
+</head>
+
+<body>
 	<div id="divTitle">
-		<div id="divIcon" class="inline-div"><img src="../icons/icon_128.png" alt="Icon" height="50" width="50"></div>
-		<div id="divHeader" class="inline-div"><h2>Options page for 'SAML to AWS STS Keys Converter'</h2></div>
+		<div id="divIcon" class="inline-div">
+			<img src="../icons/icon_128.png" alt="Icon" height="50" width="50">
+		</div>
+		<div id="divHeader" class="inline-div">
+			<h2>Options page for 'SAML to AWS STS Keys Converter'</h2>
+		</div>
 	</div>
 	<hr>
-	
+
 	<div id="divInfo">
 		<p>Developed by prolane.org (Gerard Laan), forked by Sean Fernandez (sd3z)</p>
-		<p>For help, please see README at the <a href="https://github.com/sd3z/samltoawsstskeys/blob/master/README.md" target="_blank">project page on Github.com</a></p>
+		<p>For help, please see README at the
+			<a href="https://github.com/sd3z/samltoawsstskeys/blob/master/README.md" target="_blank">project page on Github.com</a>
+		</p>
 	</div>
-	
+
 	<div id="divSettings">
 		<div id="divFilename" class="setting-part">
-			<label>Filename for writing the fetched AWS STS keys. File will be written to Chrome's download directory. Example filename: credentials</label>
+			<label>Filename for writing the fetched AWS STS keys. File will be written to Chrome's download directory. Example filename:
+				credentials</label>
 			<br />
 			<input type="text" name="FileName" id="FileName" size="40">
 		</div>
-		
+
 
 		<div id="divSessionDuration" class="setting-part">
-			<label>[OPTIONAL]</label><br>
+			<label>[OPTIONAL]</label>
+			<br>
 			<label>Apply the SessionDuration requested by the SAML provider.</label>
 			<br />
 			<select name="SessionDuration" id="SessionDuration">
@@ -34,43 +44,61 @@
 				<option value="no">no</option>
 			</select>
 		</div>
-		
+
 		<div id="divRoles" class="setting-part">
-			<label>[OPTIONAL]</label><br>
-			<label>Specify a list of Role ARN's. For each role the plugin will call the assume-role API. The fetched AWS STS keys will be added to the output file as separate profiles.</label>
+			<label>[OPTIONAL]</label>
+			<br>
+			<label>Specify a list of Role ARN's. For each role the plugin will call the assume-role API. The fetched AWS STS keys will be
+				added to the output file as separate profiles.</label>
 			<div id="role_arns" class="inline-div">
 			</div>
 		</div>
-		
+
 		<div id="divSave">
 			<div id="status" class="inline-div"></div>
 			<button id="save">Save</button>
 		</div>
 	</div>
-	
-	
+
+
 	<div id="divInfo">
 		<p>Developed by prolane.org (Gerard Laan), forked by Sean Fernandez (sd3z)</p>
-		<p>For help, please see README at the <a href="https://github.com/sd3z/samltoawsstskeys/blob/master/README.md" target="_blank">project page on Github.com</a></p>
+		<p>For help, please see README at the
+			<a href="https://github.com/sd3z/samltoawsstskeys/blob/master/README.md" target="_blank">project page on Github.com</a>
+		</p>
 	</div>
 	<hr>
-	
-	
+
+
 	<div id="divChangelog">
-		
-			<h3>2018-jul-16<br>v2.5</h3>
-			<ul>
-					<li>Added color for roles</li>
-					<li>Updated color to use high lumens to work with black text</li>
-					<li>Set roles to use an unlimited number in the drop down list</li>
-					<li>Automatically refresh credentials for additional roles every 55 minutes. Issue has been raised <a href="https://forums.aws.amazon.com/thread.jspa?threadID=285583">here</a> </li>
-			</ul>
-			<br />
-			<br />
-	
-		<h3>2016-nov-21<br>v2.0</h3>
+
+		<h3>2018-Aug-13
+			<br>v2.6</h3>
 		<ul>
-			<li>Added functionality to specify Role ARN's in the options panel. This is meant for cross-account assume-role API calls. For each specified role temporary credentials will be fetched and added to the credentials file.</li>
+			<li>Removed lumans detection and replaced with textShadow for roles</li>
+			<li>Bug fix for users with one IAM role in the SAML claim. Bug was introduced with release 2.1, but according to user reports only results in an error starting with Chrome release 68. </li>
+		</ul>
+		<br />
+		<br />
+
+		<h3>2018-jul-16
+			<br>v2.5</h3>
+		<ul>
+			<li>Added color for roles</li>
+			<li>Updated color to use high lumens to work with black text</li>
+			<li>Set roles to use an unlimited number in the drop down list</li>
+			<li>Automatically refresh credentials for additional roles every 55 minutes. Issue has been raised
+				<a href="https://forums.aws.amazon.com/thread.jspa?threadID=285583">here</a>
+			</li>
+		</ul>
+		<br />
+		<br />
+
+		<h3>2016-nov-21
+			<br>v2.0</h3>
+		<ul>
+			<li>Added functionality to specify Role ARN's in the options panel. This is meant for cross-account assume-role API calls.
+				For each specified role temporary credentials will be fetched and added to the credentials file.</li>
 			<li>Updated 'AWS SDK for Javascript' library to latest version</li>
 			<li>Plugin now shows changelog to the user after the installation of new version</li>
 			<li>Options panel has a new look to improve readability</li>
@@ -78,28 +106,33 @@
 		<br />
 		<br />
 
-		<h3>2016-jul-24<br>v1.2</h3>
+		<h3>2016-jul-24
+			<br>v1.2</h3>
 		<ul>
 			<li>Bug fix: when just 1 role in the SAML Assertion available now also works well</li>
-			<li>Now uses a regex to extract Role and Principal from SAML Assertion. This way it does not matter in what order the IDP adds the Role and Principle to the SAML Assertion.</li>
+			<li>Now uses a regex to extract Role and Principal from SAML Assertion. This way it does not matter in what order the IDP
+				adds the Role and Principle to the SAML Assertion.</li>
 		</ul>
 		<br />
 		<br />
 
-		<h3>2016-apr-11<br>v1.1</h3>
+		<h3>2016-apr-11
+			<br>v1.1</h3>
 		<ul>
-			<li>Improved usability. No longer needed to manually specify PrincipalArn and RoleArn in options panel. Removed these options from the options panel. PrincipalArn and RoleArn is now parsed from the SAML Assertion itself.</li>
+			<li>Improved usability. No longer needed to manually specify PrincipalArn and RoleArn in options panel. Removed these options
+				from the options panel. PrincipalArn and RoleArn is now parsed from the SAML Assertion itself.</li>
 		</ul>
 		<br />
 		<br />
 
-		<h3>2016-apr-04<br>v1.0</h3>
+		<h3>2016-apr-04
+			<br>v1.0</h3>
 		<ul>
 			<li>Initial release</li>
-		</ul>		
-		
+		</ul>
+
 	</div>
 	<script src="options.js"></script>
-  </body>
-</html>
+</body>
 
+</html>
