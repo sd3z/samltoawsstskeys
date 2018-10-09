@@ -274,24 +274,30 @@ chrome.runtime.onMessage.addListener(
 
 function alarmListener(alarm) {
   if (alarm.name === AlarmName) {
-    console.log('alarm trigger, refreshing additional roles.', Date.now());
+    console.log('Alarm trigger, refreshing additional roles.', Date.now(), SamlCreds.Expiration);
+    
+    if (Date.now() > SamlCreds.Expiration) {
+      chrome.alarms.clear(AlarmName);
+      console.log('Alarm deleted, please login again');
+    }
+    else {
+      //https://developer.chrome.com/extensions/alarms#type-Alarm
+      chrome.alarms.create(AlarmName, {
+        //  delayInMinutes: 0.1,
+        periodInMinutes: refreshCreds
+      });
 
-    //https://developer.chrome.com/extensions/alarms#type-Alarm
-    chrome.alarms.create(AlarmName, {
-      //  delayInMinutes: 0.1,
-      periodInMinutes: refreshCreds
-    });
-
-    // Refreshing the creds
-    var docContent = "[default] \n" +
-      "aws_access_key_id = " + SamlCreds.AccessKeyId + " \n" +
-      "aws_secret_access_key = " + SamlCreds.SecretAccessKey + " \n" +
-      "aws_session_token = " + SamlCreds.SessionToken;
+      // Refreshing the creds
+      var docContent = "[default] \n" +
+        "aws_access_key_id = " + SamlCreds.AccessKeyId + " \n" +
+        "aws_secret_access_key = " + SamlCreds.SecretAccessKey + " \n" +
+        "aws_session_token = " + SamlCreds.SessionToken;
 
 
-    var profileList = Object.keys(RoleArns);
-    console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[0]]);
-    assumeAdditionalRole(profileList, 0, SamlCreds.AccessKeyId, SamlCreds.SecretAccessKey, SamlCreds.SessionToken, docContent);
+      var profileList = Object.keys(RoleArns);
+      console.log('INFO: Do additional assume-role for role -> ' + RoleArns[profileList[0]]);
+      assumeAdditionalRole(profileList, 0, SamlCreds.AccessKeyId, SamlCreds.SecretAccessKey, SamlCreds.SessionToken, docContent);
+    }
   }
 }
 chrome.alarms.onAlarm.addListener(alarmListener);
