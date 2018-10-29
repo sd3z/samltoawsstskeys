@@ -1,5 +1,8 @@
 # Changelog
 
+## 2018-10-29
+* Added a refresh that happens every 55 minutes, so the credentials of chained accounts don't expire within the session duration.
+
 ## 2018-07-16
 * Set the duration based on the AWS CLI duration
 * Updated colors to be of an acceptable lumens for use with black text 
