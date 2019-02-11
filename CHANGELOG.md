@@ -1,5 +1,8 @@
 # Changelog
 
+## 2019-02-04
+* Updated manifest to listen to all URL's.  Not ideal, but it is the only way to get the extension to listen from a url like GSuite SSO page.
+
 ## 2018-10-29
 * Added a refresh that happens every 55 minutes, so the credentials of chained accounts don't expire within the session duration.
 

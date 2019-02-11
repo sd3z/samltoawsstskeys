@@ -90,9 +90,9 @@ function onBeforeRequestEvent(details) {
   if (details.requestBody.formData) {
     SAMLAssertion = details.requestBody.formData.SAMLResponse[0];
     if ("roleIndex" in details.requestBody.formData) {
-        hasRoleIndex = true;
-        roleIndex = details.requestBody.formData.roleIndex[0];
-      }
+      hasRoleIndex = true;
+      roleIndex = details.requestBody.formData.roleIndex[0];
+    }
   } else if (formDataPayload) {
     SAMLAssertion = formDataPayload.get('SAMLResponse');
     roleIndex = formDataPayload.get('roleIndex');
@@ -199,7 +199,7 @@ function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, 
     RoleArn: RoleArns[profileList[index]],
     RoleSessionName: profileList[index]
   };
-  
+
   if (SessionDuration !== null) {
     params['DurationSeconds'] = SessionDuration;
   }
@@ -229,16 +229,27 @@ function assumeAdditionalRole(profileList, index, AccessKeyId, SecretAccessKey, 
 // Called from either extractPrincipalPlusRoleAndAssumeRole (if RoleArns dict is empty)
 // Otherwise called from assumeAdditionalRole as soon as all roles from RoleArns have been assumed 
 function outputDocAsDownload(docContent) {
-  var doc = URL.createObjectURL(new Blob([docContent], {
-    type: 'application/octet-binary'
-  }));
+  console.log('INFO: Now going to download doc...');
+  console.log(docContent)
+
+  // var a = document.createElement("a");
+  // document.body.appendChild(a);
+  // a.style = "display: none";
+  // return function (data, fileName) {
+  //   var json = JSON.stringify(data),
+  //     blob = new Blob([docContent], { type: 'plain/text', endings: 'native' })
+  //   url = window.URL.createObjectURL(blob);
+  //   a.href = url;
+  //   a.download = FileName;
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  // };
+
+  var doc = URL.createObjectURL( new Blob([docContent], {type: 'application/octet-binary'}) );
   // Triggers download of the generated file
-  chrome.downloads.download({
-    url: doc,
-    filename: FileName,
-    conflictAction: 'overwrite',
-    saveAs: false
-  });
+  chrome.downloads.download({ url: doc, filename: FileName, conflictAction: 'overwrite', saveAs: false });
+
+
 }
 
 
@@ -275,12 +286,11 @@ chrome.runtime.onMessage.addListener(
 function alarmListener(alarm) {
   if (alarm.name === AlarmName) {
     console.log('Alarm trigger, refreshing additional roles.', Date.now(), SamlCreds.Expiration);
-    
+
     if (Date.now() > SamlCreds.Expiration) {
       chrome.alarms.clear(AlarmName);
       console.log('Alarm deleted, please login again');
-    }
-    else {
+    } else {
       //https://developer.chrome.com/extensions/alarms#type-Alarm
       chrome.alarms.create(AlarmName, {
         //  delayInMinutes: 0.1,
@@ -303,6 +313,7 @@ function alarmListener(alarm) {
 chrome.alarms.onAlarm.addListener(alarmListener);
 
 function loadItemsFromStorage() {
+  
   chrome.storage.sync.get({
     FileName: 'credentials',
     ApplySessionDuration: 'yes',
